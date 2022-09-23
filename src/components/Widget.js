@@ -4,9 +4,9 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import styled from "styled-components";
 import _ from "lodash";
 import MyPlot from "./MyPlot";
-import { useEffect, useState, useRef } from "react";
 import "./MyPlot.css";
 import { FaEdit } from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
@@ -17,14 +17,18 @@ function Grid() {
   const [popup, setPopup] = useState(false);
   const [input1, setInput1] = useState([]);
   const [input2, setInput2] = useState([]);
+  const [submit, setSubmit] = useState();
 
   const startinc = useRef();
   const stopinc = useRef();
 
+  const layout = [
+    { i: "0", x: 0, y: 0, w: 1, h: 1 },
+    { i: "1", x: 1, y: 0, w: 1, h: 1 },
+  ];
+
   const GridItemWrapper = styled.div`
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 5px 23px -17px rgb(0, 132, 255);
+    background: #f5f5f5;
     z-index: 0;
   `;
 
@@ -66,6 +70,7 @@ function Grid() {
     setInput2([update1, update2]);
   };
 
+
   useEffect(() => {
     startinc.current = setInterval(() => {
       GenerateData();
@@ -73,17 +78,41 @@ function Grid() {
     stopinc.current = setInterval(() => {
       GenerateData2();
     }, 2000);
-  }, []);
+  }, [submit===true]);
 
-  const layout = input1?.map((data, index) => {
-    return { i: `${index}`, x: index, y: 0, w: 1, h: 1 };
-  });
   const stop = (index) => {
     setKey(index);
     setPopup(true);
     clearInterval(startinc.current);
     clearInterval(stopinc.current);
   };
+
+  const Fun = (e)=>
+  {
+    e.preventDefault()
+    const Data1 = e.target.elements.Data1.value
+    const Data2 = e.target.elements.Data2.value
+    const Data3 = e.target.elements.Data3.value
+    const Data4 = e.target.elements.Data4.value
+    const Key = e.target.elements.Key.value
+
+    let now = Math.floor(new Date() / 1e3);
+    const update1 = [now, now + 60, now + 120, now + 180];
+    const update2=[Data1,Data2,Data3,Data4]
+    if(Key===0)
+    {
+      setInput1([update1,update2])
+    }
+    else
+    {
+      setInput2([update1,update2])
+    }
+    setSubmit(true)
+    setPopup(false)
+
+    
+    console.log(Data1,"Data1",Data2,"Data2",Data3,"Data3",Data4,"Data4")
+  }
 
   const input1data = { Data: input1, Opts: opts1 };
   const input2data = { Data: input2, Opts: opts1 };
@@ -92,11 +121,7 @@ function Grid() {
 
   const data = JSON.parse(localStorage.getItem("Data"));
 
-  const Fun =(e)=>
-  {
-    e.preventDefault()
-    console.log(e.target)
-  }
+  
   return (
     <>
       <ResponsiveGridLayout
@@ -111,13 +136,13 @@ function Grid() {
       >
         {Object.keys(data).map((dataentry, index) => {
           return (
-            <div key={index}>
+              
+              <GridItemWrapper key={index}>
               <FaEdit
                 onClick={() => {
                   stop(index);
                 }}
               />
-              <GridItemWrapper>
                 <GridItemContent>
                   <MyPlot
                     options={data[dataentry].Opts}
@@ -126,14 +151,14 @@ function Grid() {
                   />
                 </GridItemContent>
               </GridItemWrapper>
-            </div>
+            
           );
         })}
       </ResponsiveGridLayout>
 
       <form className={popup ? "DisplayForm" : "InitialForm"} onSubmit={(e)=>{Fun(e)}}>
         <label htmlFor="Key">Key </label>{" "}
-        <input type="text" value={key} disabled />
+        <input type="text" name="Key" value={key} disabled />
         <br />
         <label htmlFor="Data1">Data1</label> <input name="Data1" type="text" />
         <br />
