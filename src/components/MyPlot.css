@@ -7,15 +7,26 @@ svg {
   margin: 10px 15px;
 }
 
-/* .myPlot {
-  display: flex;
-  justify-content: center;
-} */
+.InitialForm {
+  display: inline-block;
+  transition: 2.5s;
+  position: absolute;
+  top: 25px;
+  right: 1%;
+  display: none;
+}
 
-.chumma{
-  width: 80%;
-  height: 50%;
-  /* margin: 50px; */
-  padding: 24px;
-  background-color: white;
+.DisplayForm {
+  position: absolute;
+  top: 25px;
+  right: 30px;
+  transition: 2.5s;
+  display: inline-block;
+  height: 127px;
+  background-color: lightgrey;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.con {
 }
