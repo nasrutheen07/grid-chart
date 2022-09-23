@@ -4,12 +4,15 @@ import styled from "styled-components";
 import _ from "lodash";
 import MyPlot from "./MyPlot";
 import { useEffect, useState } from "react";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const Grid = () => {
   const GridItemWrapper = styled.div`
     background: white;
-    border-radius: 5px;
+    border-radius: 8px;
     box-shadow: 0 5px 23px -17px rgb(0, 132, 255);
   `;
 
@@ -21,14 +24,8 @@ const Grid = () => {
     padding: 16px;
   `;
 
-  const [input1, setInput1] = useState([
-    [1663843805, 1663843865, 1663843925, 1663843985],
-    [22, 9, 17, 6],
-  ]);
-  const [input2, setInput2] = useState([
-    [1663843805, 1663843865, 1663843925, 1663843985],
-    [11, 2, 14, 17],
-  ]);
+  const [input1, setInput1] = useState([]);
+  const [input2, setInput2] = useState([]);
 
   const opts1 = {
     title: "MyPlot",
@@ -68,12 +65,6 @@ const Grid = () => {
       GenerateData2();
     }, 2000);
   }, []);
-
-  // useEffect(() => {
-  //   GenerateData2();
-  //   GenerateData();
-  // }, []);
-  console.log(input1, input2);
 
   const layout = input1?.map((data, index) => {
     return { i: `${index}`, x: index, y: 0, w: 1, h: 1 };

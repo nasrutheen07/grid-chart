@@ -1,10 +1,21 @@
-.u-legend
-{
-    font-size: 10px!important;
+.u-legend {
+  font-size: 10px !important;
 }
 
-svg
-{
-    float: right;
-    margin: 10px 15px;
+svg {
+  float: right;
+  margin: 10px 15px;
+}
+
+/* .myPlot {
+  display: flex;
+  justify-content: center;
+} */
+
+.chumma{
+  width: 80%;
+  height: 50%;
+  /* margin: 50px; */
+  padding: 24px;
+  background-color: white;
 }

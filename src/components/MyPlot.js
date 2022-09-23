@@ -13,11 +13,10 @@ function MyPlot(props) {
     plotIstanceRef.current.setSize({ width: 250, height: 230 });
     plotIstanceRef.current.setScale("y", { min: 0, max: 40 });
     plotIstanceRef.current.setData(props.data);
-
   }, [props]);
   return (
     <div>
-      <div ref={plotRef} />
+      <div ref={plotRef} className="myPlot" />
     </div>
   );
 }
