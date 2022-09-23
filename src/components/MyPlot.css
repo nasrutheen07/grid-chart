@@ -1,37 +1,32 @@
-.u-legend
-{
-    font-size: 10px!important;
+.u-legend {
+  font-size: 10px !important;
 }
 
-svg
-{
-    float: right;
-    margin: 10px 15px;
+svg {
+  float: right;
+  margin: 10px 15px;
 }
 
-.InitialForm
-{
-    display: inline-block;
-    transition: 2.5s;
-    position: absolute;
-    top: 25px;
-    right: 1%;
-    display: none;
-
+.InitialForm {
+  display: inline-block;
+  transition: 2.5s;
+  position: absolute;
+  top: 25px;
+  right: 1%;
+  display: none;
 }
 
-
-.DisplayForm{
-    position: absolute;
-    top: 25px;
-    right: 30px;
-    transition: 2.5s;
-    display: inline-block;
-    height: 127px;
-    background-color: lightgrey;
-    border-radius: 5px;
-    padding: 10px;
+.DisplayForm {
+  position: absolute;
+  top: 25px;
+  right: 30px;
+  transition: 2.5s;
+  display: inline-block;
+  height: 127px;
+  background-color: lightgrey;
+  border-radius: 5px;
+  padding: 10px;
 }
 
-.con
-{}
+.con {
+}

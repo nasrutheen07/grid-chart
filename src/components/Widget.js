@@ -4,9 +4,9 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import styled from "styled-components";
 import _ from "lodash";
 import MyPlot from "./MyPlot";
+import { useEffect, useState, useRef } from "react";
 import "./MyPlot.css";
 import { FaEdit } from "react-icons/fa";
-import { useState, useEffect, useRef } from "react";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
@@ -21,13 +21,10 @@ function Grid() {
   const startinc = useRef();
   const stopinc = useRef();
 
-  const layout = [
-    { i: "0", x: 0, y: 0, w: 1, h: 1 },
-    { i: "1", x: 1, y: 0, w: 1, h: 1 },
-  ];
-
   const GridItemWrapper = styled.div`
-    background: #f5f5f5;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 23px -17px rgb(0, 132, 255);
     z-index: 0;
   `;
 
@@ -69,7 +66,6 @@ function Grid() {
     setInput2([update1, update2]);
   };
 
-
   useEffect(() => {
     startinc.current = setInterval(() => {
       GenerateData();
@@ -79,6 +75,9 @@ function Grid() {
     }, 2000);
   }, []);
 
+  const layout = input1?.map((data, index) => {
+    return { i: `${index}`, x: index, y: 0, w: 1, h: 1 };
+  });
   const stop = (index) => {
     setKey(index);
     setPopup(true);
