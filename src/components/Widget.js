@@ -18,14 +18,20 @@ function Grid() {
   const [input1, setInput1] = useState([]);
   const [input2, setInput2] = useState([]);
   const [submit, setSubmit] = useState();
+  const [resize1,setResize1] =useState({w:1,h:1});
+  const [resize2,setResize2] =useState({w:1,h:1});
 
-  const startinc = useRef();
-  const stopinc = useRef();
+  const Loop1 = useRef();
+  const Loop2 = useRef();
 
-  const layout = [
+  /////
+
+
+
+  const layout =[
     { i: "0", x: 0, y: 0, w: 1, h: 1 },
     { i: "1", x: 1, y: 0, w: 1, h: 1 },
-  ];
+  ]
 
   const GridItemWrapper = styled.div`
     background: #f5f5f5;
@@ -70,58 +76,70 @@ function Grid() {
     setInput2([update1, update2]);
   };
 
-
   useEffect(() => {
-    startinc.current = setInterval(() => {
-      GenerateData();
-    }, 2000);
-    stopinc.current = setInterval(() => {
-      GenerateData2();
-    }, 2000);
-  }, [submit===true]);
+    // Loop1.current = setInterval(() => {
+    //   GenerateData();
+    // }, 2000);
+    // Loop2.current = setInterval(() => {
+    //   GenerateData2();
+    // }, 2000);
+    GenerateData();
+    GenerateData2();
+
+  }, [submit === true]);
+
+
 
   const stop = (index) => {
     setKey(index);
     setPopup(true);
-    clearInterval(startinc.current);
-    clearInterval(stopinc.current);
+    // index === 0 ? clearInterval(Loop1.current) : clearInterval(Loop2.current);
+    clearInterval(Loop1.current);
+    clearInterval(Loop2.current);
   };
 
-  const Fun = (e)=>
-  {
-    e.preventDefault()
-    const Data1 = e.target.elements.Data1.value
-    const Data2 = e.target.elements.Data2.value
-    const Data3 = e.target.elements.Data3.value
-    const Data4 = e.target.elements.Data4.value
-    const Key = e.target.elements.Key.value
+  const Fun = (e) => {
+    e.preventDefault();
+    const Data1 = e.target.elements.Data1.value;
+    const Data2 = e.target.elements.Data2.value;
+    const Data3 = e.target.elements.Data3.value;
+    const Data4 = e.target.elements.Data4.value;
+    const Key = e.target.elements.Key.value;
 
     let now = Math.floor(new Date() / 1e3);
     const update1 = [now, now + 60, now + 120, now + 180];
-    const update2=[Data1,Data2,Data3,Data4]
-    if(Key===0)
-    {
-      setInput1([update1,update2])
+    const update2 = [Data1, Data2, Data3, Data4];
+    if (Key === 0) {
+      setInput1([update1, update2]);
+    } else {
+      setInput2([update1, update2]);
     }
-    else
-    {
-      setInput2([update1,update2])
-    }
-    setSubmit(true)
-    setPopup(false)
+    setSubmit(true);
+    setPopup(false);
 
-    
-    console.log(Data1,"Data1",Data2,"Data2",Data3,"Data3",Data4,"Data4")
-  }
+    console.log(Data1, "Data1", Data2, "Data2", Data3, "Data3", Data4, "Data4");
+  };
 
-  const input1data = { Data: input1, Opts: opts1 };
-  const input2data = { Data: input2, Opts: opts1 };
+  const input1data = { Data: input1, Opts: opts1 ,resize:resize1};
+  const input2data = { Data: input2, Opts: opts1 ,resize:resize2};
 
   localStorage.setItem("Data", JSON.stringify({ input1data, input2data }));
 
   const data = JSON.parse(localStorage.getItem("Data"));
 
+  const Resize = (e) =>
+  {
+    setResize1(e[0])
+    setResize2(e[1])
+    console.log(e)
+  }
+
+
+
   
+
+
+
   return (
     <>
       <ResponsiveGridLayout
@@ -131,32 +149,38 @@ function Grid() {
         rowHeight={300}
         width={1000}
         isResizable={true}
-        isDraggable={true}
-        autoSize={true}
+        onResizeStop={(e)=>{Resize(e)}}
+        
+        
       >
         {Object.keys(data).map((dataentry, index) => {
           return (
-              
-              <GridItemWrapper key={index}>
-              <FaEdit
-                onClick={() => {
-                  stop(index);
-                }}
-              />
+            <GridItemWrapper key={index} >
+
+                <FaEdit
+                  onClick={() => {
+                    stop(index);
+                  }}
+                />
                 <GridItemContent>
                   <MyPlot
                     options={data[dataentry].Opts}
                     data={data[dataentry].Data}
-                    isResizable={true}
+                    resize={data[dataentry].resize}
                   />
                 </GridItemContent>
-              </GridItemWrapper>
-            
+              
+            </GridItemWrapper>
           );
         })}
       </ResponsiveGridLayout>
 
-      <form className={popup ? "DisplayForm" : "InitialForm"} onSubmit={(e)=>{Fun(e)}}>
+      <form
+        className={popup ? "DisplayForm" : "InitialForm"}
+        onSubmit={(e) => {
+          Fun(e);
+        }}
+      >
         <label htmlFor="Key">Key </label>{" "}
         <input type="text" name="Key" value={key} disabled />
         <br />
