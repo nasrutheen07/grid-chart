@@ -93,6 +93,11 @@ function Grid() {
 
   const data = JSON.parse(localStorage.getItem("Data"));
 
+  const Fun =(e)=>
+  {
+    e.preventDefault()
+    console.log(e.target)
+  }
   return (
     <>
       <ResponsiveGridLayout
@@ -126,9 +131,8 @@ function Grid() {
           );
         })}
       </ResponsiveGridLayout>
-      {/* <button onClick={()=>{start()}}>start</button> */}
-      {/* <button onClick={()=>{stop()}}>stop</button> */}
-      <form className={popup ? "DisplayForm" : "InitialForm"}>
+
+      <form className={popup ? "DisplayForm" : "InitialForm"} onSubmit={(e)=>{Fun(e)}}>
         <label htmlFor="Key">Key </label>{" "}
         <input type="text" value={key} disabled />
         <br />
