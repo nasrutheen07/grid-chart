@@ -17,14 +17,19 @@ function Grid() {
   const [popup, setPopup] = useState(false);
   const [input1, setInput1] = useState([]);
   const [input2, setInput2] = useState([]);
+  const [submit, setSubmit] = useState();
+  const [resize1, setResize1] = useState({ w: 1, h: 1 });
+  const [resize2, setResize2] = useState({ w: 1, h: 1 });
 
-  const datainc1 = useRef();
-  const datainc2 = useRef();
+  const Loop1 = useRef();
+  const Loop2 = useRef();
 
-  const [layout, setLayout] = useState([
+  /////
+
+  const layout = [
     { i: "0", x: 0, y: 0, w: 1, h: 1 },
     { i: "1", x: 1, y: 0, w: 1, h: 1 },
-  ]);
+  ];
 
   const GridItemWrapper = styled.div`
     background: #f5f5f5;
@@ -70,39 +75,58 @@ function Grid() {
   };
 
   useEffect(() => {
-    //  GenerateData2();
-    //     GenerateData();
-    datainc1.current = setInterval(() => {
+    Loop1.current = setInterval(() => {
       GenerateData();
     }, 2000);
-    datainc2.current = setInterval(() => {
+    Loop2.current = setInterval(() => {
       GenerateData2();
     }, 2000);
-  }, []);
+    // GenerateData();
+    // GenerateData2();
+  }, [submit === true]);
 
   const stop = (index) => {
     setKey(index);
     setPopup(true);
-    index === 0
-      ? clearInterval(datainc1.current)
-      : clearInterval(datainc2.current);
+    // index === 0 ? clearInterval(Loop1.current) : clearInterval(Loop2.current);
+    clearInterval(Loop1.current);
+    clearInterval(Loop2.current);
   };
 
-  const close = () => {
+  const Fun = (e) => {
+    e.preventDefault();
+    const Data1 = e.target.elements.Data1.value;
+    const Data2 = e.target.elements.Data2.value;
+    const Data3 = e.target.elements.Data3.value;
+    const Data4 = e.target.elements.Data4.value;
+    const Key = e.target.elements.Key.value;
+
+    let now = Math.floor(new Date() / 1e3);
+    const update1 = [now, now + 60, now + 120, now + 180];
+    const update2 = [Data1, Data2, Data3, Data4];
+    if (Key === 0) {
+      setInput1([update1, update2]);
+    } else {
+      setInput2([update1, update2]);
+    }
+    setSubmit(true);
     setPopup(false);
+
+    console.log(Data1, "Data1", Data2, "Data2", Data3, "Data3", Data4, "Data4");
   };
 
-  const input1data = { Data: input1, Opts: opts1 };
-  const input2data = { Data: input2, Opts: opts1 };
+  const input1data = { Data: input1, Opts: opts1, resize: resize1 };
+  const input2data = { Data: input2, Opts: opts1, resize: resize2 };
 
   localStorage.setItem("Data", JSON.stringify({ input1data, input2data }));
 
   const data = JSON.parse(localStorage.getItem("Data"));
 
-  const sizeref1 = useRef(null);
-  const sizeref2 = useRef(null);
-  const [size1, setsize1] = useState({ width: 300, height: 250 });
-  const [size2, setsize2] = useState({ width: 300, height: 250 });
+  const Resize = (e) => {
+    setResize1(e[0]);
+    setResize2(e[1]);
+    console.log(e);
+  };
 
   return (
     <>
@@ -114,40 +138,10 @@ function Grid() {
         width={1000}
         isResizable={true}
         onResizeStop={(e) => {
-          console.log(e);
-          setLayout(e);
-          setsize1({
-            width: sizeref1.current.parentElement.clientWidth,
-            height: sizeref1.current.parentElement.clientHeight,
-          });
-          setsize2({
-            width: sizeref2.current.parentElement.clientWidth,
-            height: sizeref2.current.parentElement.clientHeight,
-          });
+          Resize(e);
         }}
       >
-        <GridItemWrapper key="0">
-          {/* <FaEdit
-            onClick={() => {
-              stop(0);
-            }}
-          /> */}
-          <GridItemContent>
-            <MyPlot options={opts1} data={input1} />
-          </GridItemContent>
-        </GridItemWrapper>
-
-        <GridItemWrapper key="1">
-          {/* <FaEdit
-            onClick={() => {
-              stop(1);
-            }}
-          /> */}
-          <GridItemContent>
-            <MyPlot options={opts1} data={input2} />
-          </GridItemContent>
-        </GridItemWrapper>
-        {/* {Object.keys(data).map((dataentry, index) => {
+        {Object.keys(data).map((dataentry, index) => {
           return (
             <GridItemWrapper key={index}>
               <FaEdit
@@ -159,29 +153,22 @@ function Grid() {
                 <MyPlot
                   options={data[dataentry].Opts}
                   data={data[dataentry].Data}
+                  resize={data[dataentry].resize}
                 />
               </GridItemContent>
             </GridItemWrapper>
           );
-        })} */}
+        })}
       </ResponsiveGridLayout>
-      {/* <button onClick={()=>{start()}}>start</button> */}
-      {/* <button onClick={()=>{stop()}}>stop</button> */}
-      <form className={popup ? "DisplayForm" : "InitialForm"}>
+
+      <form
+        className={popup ? "DisplayForm" : "InitialForm"}
+        onSubmit={(e) => {
+          Fun(e);
+        }}
+      >
         <label htmlFor="Key">Key </label>{" "}
-        <input type="text" value={key} disabled />
-        <button
-          style={{
-            cursor: "pointer",
-            background: "red",
-            borderRadius: "50%",
-            border: "none",
-            outline: "none",
-          }}
-          onClick={close}
-        >
-          X{" "}
-        </button>
+        <input type="text" name="Key" value={key} disabled />
         <br />
         <label htmlFor="Data1">Data1</label> <input name="Data1" type="text" />
         <br />
