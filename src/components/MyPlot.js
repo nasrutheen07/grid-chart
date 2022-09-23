@@ -6,6 +6,10 @@ import "/node_modules/uplot/dist/uPlot.min.css";
 function MyPlot(props) {
   const plotRef = useRef();
   const plotIstanceRef = useRef(null);
+  
+
+
+
 
   useEffect(() => {
     const uPlotInstance = new uPlot(props.options, props.data, plotRef.current);
