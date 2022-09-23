@@ -28,5 +28,6 @@ svg {
   padding: 10px;
 }
 
-.con {
+form input{
+  outline: none;
 }

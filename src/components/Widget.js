@@ -4,9 +4,9 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import styled from "styled-components";
 import _ from "lodash";
 import MyPlot from "./MyPlot";
-import { useEffect, useState, useRef } from "react";
 import "./MyPlot.css";
 import { FaEdit } from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
@@ -18,13 +18,16 @@ function Grid() {
   const [input1, setInput1] = useState([]);
   const [input2, setInput2] = useState([]);
 
-  const startinc = useRef();
-  const stopinc = useRef();
+  const datainc1 = useRef();
+  const datainc2 = useRef();
+
+  const [layout, setLayout] = useState([
+    { i: "0", x: 0, y: 0, w: 1, h: 1 },
+    { i: "1", x: 1, y: 0, w: 1, h: 1 },
+  ]);
 
   const GridItemWrapper = styled.div`
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 5px 23px -17px rgb(0, 132, 255);
+    background: #f5f5f5;
     z-index: 0;
   `;
 
@@ -67,22 +70,26 @@ function Grid() {
   };
 
   useEffect(() => {
-    startinc.current = setInterval(() => {
+    //  GenerateData2();
+    //     GenerateData();
+    datainc1.current = setInterval(() => {
       GenerateData();
     }, 2000);
-    stopinc.current = setInterval(() => {
+    datainc2.current = setInterval(() => {
       GenerateData2();
     }, 2000);
   }, []);
 
-  const layout = input1?.map((data, index) => {
-    return { i: `${index}`, x: index, y: 0, w: 1, h: 1 };
-  });
   const stop = (index) => {
     setKey(index);
     setPopup(true);
-    clearInterval(startinc.current);
-    clearInterval(stopinc.current);
+    index === 0
+      ? clearInterval(datainc1.current)
+      : clearInterval(datainc2.current);
+  };
+
+  const close = () => {
+    setPopup(false);
   };
 
   const input1data = { Data: input1, Opts: opts1 };
@@ -91,6 +98,11 @@ function Grid() {
   localStorage.setItem("Data", JSON.stringify({ input1data, input2data }));
 
   const data = JSON.parse(localStorage.getItem("Data"));
+
+  const sizeref1 = useRef(null);
+  const sizeref2 = useRef(null);
+  const [size1, setsize1] = useState({ width: 300, height: 250 });
+  const [size2, setsize2] = useState({ width: 300, height: 250 });
 
   return (
     <>
@@ -101,35 +113,75 @@ function Grid() {
         rowHeight={300}
         width={1000}
         isResizable={true}
-        isDraggable={true}
-        autoSize={true}
+        onResizeStop={(e) => {
+          console.log(e);
+          setLayout(e);
+          setsize1({
+            width: sizeref1.current.parentElement.clientWidth,
+            height: sizeref1.current.parentElement.clientHeight,
+          });
+          setsize2({
+            width: sizeref2.current.parentElement.clientWidth,
+            height: sizeref2.current.parentElement.clientHeight,
+          });
+        }}
       >
-        {Object.keys(data).map((dataentry, index) => {
+        <GridItemWrapper key="0">
+          {/* <FaEdit
+            onClick={() => {
+              stop(0);
+            }}
+          /> */}
+          <GridItemContent>
+            <MyPlot options={opts1} data={input1} />
+          </GridItemContent>
+        </GridItemWrapper>
+
+        <GridItemWrapper key="1">
+          {/* <FaEdit
+            onClick={() => {
+              stop(1);
+            }}
+          /> */}
+          <GridItemContent>
+            <MyPlot options={opts1} data={input2} />
+          </GridItemContent>
+        </GridItemWrapper>
+        {/* {Object.keys(data).map((dataentry, index) => {
           return (
-            <div key={index}>
+            <GridItemWrapper key={index}>
               <FaEdit
                 onClick={() => {
                   stop(index);
                 }}
               />
-              <GridItemWrapper>
-                <GridItemContent>
-                  <MyPlot
-                    options={data[dataentry].Opts}
-                    data={data[dataentry].Data}
-                    isResizable={true}
-                  />
-                </GridItemContent>
-              </GridItemWrapper>
-            </div>
+              <GridItemContent>
+                <MyPlot
+                  options={data[dataentry].Opts}
+                  data={data[dataentry].Data}
+                />
+              </GridItemContent>
+            </GridItemWrapper>
           );
-        })}
+        })} */}
       </ResponsiveGridLayout>
       {/* <button onClick={()=>{start()}}>start</button> */}
       {/* <button onClick={()=>{stop()}}>stop</button> */}
       <form className={popup ? "DisplayForm" : "InitialForm"}>
         <label htmlFor="Key">Key </label>{" "}
         <input type="text" value={key} disabled />
+        <button
+          style={{
+            cursor: "pointer",
+            background: "red",
+            borderRadius: "50%",
+            border: "none",
+            outline: "none",
+          }}
+          onClick={close}
+        >
+          X{" "}
+        </button>
         <br />
         <label htmlFor="Data1">Data1</label> <input name="Data1" type="text" />
         <br />
